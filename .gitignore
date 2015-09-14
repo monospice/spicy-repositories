@@ -1,0 +1,4 @@
+/vendor
+/build
+/tests/_data
+/composer.lock

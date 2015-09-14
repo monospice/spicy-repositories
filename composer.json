@@ -1,0 +1,28 @@
+{
+    "name": "monospice/spicy-repositories",
+    "description": "A lightweight framework used to create repositories.",
+    "keywords": ["repository", "repositories", "laravel", "eloquent"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cy Rossignol",
+            "email": "cy@rossignols.me"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": ">=4.2",
+        "illuminate/database": ">=4.2",
+        "illuminate/pagination": ">=4.2"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "~2.3",
+        "mockery/mockery": "0.9.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Monospice\\SpicyRepositories\\": "src/",
+            "Monospice\\SpicyRepositories\\Test\\": "tests/"
+        }
+    }
+}

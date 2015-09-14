@@ -1,0 +1,7 @@
+formatter.name: pretty
+suites:
+    main:
+        namespace: Monospice\SpicyRepositories
+        psr4_prefix: Monospice\SpicyRepositories
+        spec_path: tests
+        spec_prefix: Spec
