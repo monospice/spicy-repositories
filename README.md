@@ -280,7 +280,7 @@ in the repository--there is no way to gather them from an Eloquent model at
 this time)
 
 ```php
-$repository->with('comments')->getAll();
+$repository->withRelated()->getAll();
 ```
 
 And in the repository, add this property:
