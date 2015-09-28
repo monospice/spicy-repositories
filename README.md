@@ -102,7 +102,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
 {
     public function __construct(User $user)
     {
-        parent::construct($user);
+        parent::__construct($user);
     }
 
     // custom repository methods here
