@@ -49,15 +49,15 @@ class RepositoryServiceProvider extends EloquentRepositoryServiceProvider
         return [
             'Namespace\Of\Your\Repository\Interface', function($app) {
                 // any setup logic
-                $model = new YourModel();
-                return new Namespace\Of\Your\ConcreteRepository($model);
+                $model = new \YourModel();
+                return new \Namespace\Of\Your\ConcreteRepository($model);
             },
             // For example:
             'App\Repositories\UserRepositoryInterface', function($app) {
-                return new App\Repositories\UserRepository(new App\User());
+                return new \App\Repositories\UserRepository(new \App\User());
             },
             'App\Repositories\PostRepositoryInterface', function($app) {
-                return new App\Repositories\PostRepository(new App\Post());
+                return new \App\Repositories\PostRepository(new \App\Post());
             },
         ];
     }
@@ -267,6 +267,28 @@ $repository->orderBy('name')->getAll();
 $repository->orberBy('age', 'desc')->getAll();
 ```
 
+**with()** - eager load (in same query) the specified relationships (defined
+on the model)
+
+```php
+$repository->with('comments')->getAll();
+```
+
+**withRelated()** - eager load (in the same query) all the relationships defined on
+the model and in the repository (these relationships must be defined manually
+in the repository--there is no way to gather them from an Eloquent model at
+this time)
+
+```php
+$repository->with('comments')->getAll();
+```
+
+And in the repository, add this property:
+
+```php
+protected $related = ['likes', 'comments'];
+```
+
 **Custom Criteria**
 
 Repositories are especially powerful when developers create custom, reusable
@@ -318,6 +340,7 @@ $result = $repository
     ->update($related)
     ->orderBy('name')
     ->exclude('password')
+    ->withRelated()
     ->someCustomCriteria()
     ->getAll();
 ```
