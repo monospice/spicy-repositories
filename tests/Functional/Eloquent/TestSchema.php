@@ -22,5 +22,13 @@ class TestSchema
             $table->string('attribute1');
             $table->string('attribute2');
         });
+
+        $database->createTable('related_models', function($table) {
+            $table->increments('id');
+            $table->string('attribute3');
+            $table->integer('test_model_id')
+                ->references('id')
+                ->on('test_models');
+        });
     }
 }

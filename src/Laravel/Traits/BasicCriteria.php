@@ -17,7 +17,7 @@ trait BasicCriteria
     public function only($columns)
     {
         if (! is_array($columns)) {
-            $columns = func_get_args($columns);
+            $columns = func_get_args();
         }
 
         $this->addCriteria(function($query) use ($columns) {
@@ -27,10 +27,11 @@ trait BasicCriteria
         return $this;
     }
 
+    // Inherit Doc from Interfaces\BasicCriteria
     public function exclude($columns)
     {
         if (! is_array($columns)) {
-            $columns = func_get_args($columns);
+            $columns = func_get_args();
         }
 
         $this->addCriteria(function($query) use ($columns) {
@@ -62,5 +63,34 @@ trait BasicCriteria
         });
 
         return $this;
+    }
+
+    // Inherit Doc from Interfaces\BasicCriteria
+    public function with($related)
+    {
+        if (! is_array($related)) {
+            $related = func_get_args();
+        }
+
+        $this->addCriteria(function($query) use ($related) {
+            return $query->with($related);
+        });
+
+        return $this;
+    }
+
+    // Inherit Doc from Interfaces\BasicCriteria
+    public function withRelated()
+    {
+        if ($this->related === null) {
+            throw new \RuntimeException(
+                'No relationships defined in the repository. Eloquent does ' .
+                'not support reading relationships from the Model. Related ' .
+                'models must be defined in the $related property of the ' .
+                'repository.'
+            );
+        }
+
+        return $this->with($this->related);
     }
 }

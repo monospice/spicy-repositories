@@ -14,8 +14,9 @@ namespace Monospice\SpicyRepositories\Test\Functional\Eloquent;
 class TestData
 {
     const TABLE = 'test_models';
+    const RELATED_TABLE = 'related_models';
 
-    public static function seed($database)
+    public static function seedTestModels($database)
     {
         $data = [
             [
@@ -36,6 +37,21 @@ class TestData
         ];
 
         $database->seed(self::TABLE, $data);
+
+        return $data;
+    }
+
+    public static function seedRelatedModels($database)
+    {
+        $data = [
+            [
+                'id' => '1',
+                'attribute3' => 'related',
+                'test_model_id' => '1',
+            ],
+        ];
+
+        $database->seed(self::RELATED_TABLE, $data);
 
         return $data;
     }

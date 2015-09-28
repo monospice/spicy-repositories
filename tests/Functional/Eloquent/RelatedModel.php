@@ -5,7 +5,7 @@ namespace Monospice\SpicyRepositories\Test\Functional\Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A generic Eloquent model used for testing
+ * A generic Eloquent model used for testing relationships
  *
  * @category Package
  * @package  Monospice\SpicyRepositories
@@ -13,20 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  * @license  See LICENSE file
  * @link     http://github.com/monospice/spicy-repositories
  */
-class TestModel extends Model
+class RelatedModel extends Model
 {
     protected $fillable = [
-        'attribute1',
-        'attribute2',
-        'related_model_id',
+        'attribute3',
     ];
 
     public $timestamps = false;
-
-    public function relatedModel()
-    {
-        $namespace = 'Monospice\SpicyRepositories\Test\Functional\Eloquent';
-
-        return $this->hasOne($namespace . '\RelatedModel');
-    }
 }

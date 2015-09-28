@@ -4,12 +4,11 @@ namespace Monospice\SpicyRepositories\Tests\Functional\Eloquent;
 
 use PHPUnit_Framework_TestCase;
 
+use Monospice\SpicyRepositories\Test\Functional\Eloquent\RepositoryStub;
 use Monospice\SpicyRepositories\Test\Functional\Eloquent\TestModel;
 use Monospice\SpicyRepositories\Test\Functional\Eloquent\TestData;
 use Monospice\SpicyRepositories\Test\Functional\Eloquent\TestDatabase;
 use Monospice\SpicyRepositories\Test\Functional\Eloquent\TestSchema;
-
-use Monospice\SpicyRepositories\Laravel\EloquentRepository;
 
 class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
 {
@@ -43,9 +42,10 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $this->database = TestDatabase::initialize();
         TestSchema::initialize($this->database);
-        $this->data = TestData::seed($this->database);
+        $this->data = TestData::seedTestModels($this->database);
+        TestData::seedRelatedModels($this->database);
 
-        $this->repository = new EloquentRepository(new TestModel);
+        $this->repository = new RepositoryStub(new TestModel);
     }
 
     public function testGetAll()
@@ -57,17 +57,8 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testPaginateAll()
     {
-        $page1 = [[
-            'id' => '1',
-            'attribute1' => 'value1',
-            'attribute2' => 'same',
-        ]];
-        $page2 = [[
-            'id' => '2',
-            'attribute1' => 'value3',
-            'attribute2' => 'value4',
-        ]];
-
+        $page1 = [$this->data[0]];
+        $page2 = [$this->data[1]];
 
         $result = $this->repository->paginateAll(1);
         $this->assertSame($page1, $result->toArray()['data']);
@@ -94,17 +85,8 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testPaginateBy()
     {
-        $page1 = [[
-            'id' => '1',
-            'attribute1' => 'value1',
-            'attribute2' => 'same',
-        ]];
-        $page2 = [[
-            'id' => '3',
-            'attribute1' => 'value5',
-            'attribute2' => 'same',
-        ]];
-
+        $page1 = [$this->data[0]];
+        $page2 = [$this->data[2]];
 
         $result = $this->repository->paginateBy('attribute2', 'same', 1);
         $this->assertSame($page1, $result->toArray()['data']);
@@ -123,7 +105,11 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $input = ['attribute1' => 'new', 'attribute2' => 'new'];
+        $input = [
+            'attribute1' => 'new',
+            'attribute2' => 'new',
+        ];
+
         $newModel = $this->repository->create($input)->getResult();
 
         $this->assertSame(4, $newModel->id);
@@ -175,18 +161,16 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
             ['attribute1' => 'value5'],
         ];
 
-        $result = $this->repository->exclude(['id', 'attribute2'])->getAll();
+        $result = $this->repository
+            ->exclude(['id', 'attribute2'])
+            ->getAll();
 
         $this->assertSame($expected, $result->toArray());
     }
 
     public function testCriterionLimit()
     {
-        $expected = [[
-            'id' => '1',
-            'attribute1' => 'value1',
-            'attribute2' => 'same',
-        ]];
+        $expected = [$this->data[0]];
 
         $result = $this->repository->limit(1)->getAll();
 
@@ -196,25 +180,33 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
     public function testCriterionOrderBy()
     {
         $expected = [
-            [
-                'id' => '1',
-                'attribute1' => 'value1',
-                'attribute2' => 'same',
-            ],
-            [
-                'id' => '3',
-                'attribute1' => 'value5',
-                'attribute2' => 'same',
-            ],
-            [
-                'id' => '2',
-                'attribute1' => 'value3',
-                'attribute2' => 'value4',
-            ],
+            $this->data[0],
+            $this->data[2],
+            $this->data[1],
         ];
 
         $result = $this->repository->orderBy('attribute2')->getAll();
 
         $this->assertSame($expected, $result->toArray());
+    }
+
+    public function testCriterionWith()
+    {
+        $expected = 'related';
+
+        $result = $this->repository->with('relatedModel')->getAll()
+            ->first()->relatedModel->attribute3;
+
+        $this->assertSame($expected, $result);
+    }
+
+    public function testCriterionWithRelated()
+    {
+        $expected = 'related';
+
+        $result = $this->repository->withRelated()->getAll()
+            ->first()->relatedModel->attribute3;
+
+        $this->assertSame($expected, $result);
     }
 }

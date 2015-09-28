@@ -55,4 +55,22 @@ interface BasicCriteria extends Interfaces\HasCriteria
      * repository used for chaining methods
      */
     public function orderBy($column, $direction = 'asc');
+
+    /**
+     * Eager load the specified relationships of the model
+     *
+     * @param string|array $related The names of the relationships to load
+     *
+     * @return \Monospice\SpicyRepositories\Interfaces\Repository The current
+     * repository used for chaining methods
+     */
+    public function with($related);
+
+    /**
+     * Eager load all the relationships of the model
+     *
+     * @return \Monospice\SpicyRepositories\Interfaces\Repository The current
+     * repository used for chaining methods
+     */
+    public function withRelated();
 }
