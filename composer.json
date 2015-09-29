@@ -1,6 +1,6 @@
 {
     "name": "monospice/spicy-repositories",
-    "description": "A lightweight framework used to create repositories.",
+    "description": "A lightweight repository framework using functional criteria for more fluid code.",
     "keywords": ["repository", "repositories", "laravel", "eloquent"],
     "license": "MIT",
     "authors": [
