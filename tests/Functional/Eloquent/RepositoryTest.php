@@ -122,9 +122,9 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
     public function testUpdate()
     {
         $input = ['attribute1' => 'changed'];
-        $succeeded = $this->repository->update(1, $input)->getResult();
 
-        $this->assertSame(true, $succeeded);
+        $result = $this->repository->update(1, $input)->getResult();
+
         $this->database->seeIn('test_models', [
             'id' => '1',
             'attribute1' => 'changed',
@@ -134,11 +134,12 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
     public function testUpdateMultiple()
     {
         $input = ['attribute1' => 'changed'];
-        $succeeded = $this->repository
-            ->update('same', $input, 'attribute2')
-            ->getResult();
 
-        $this->assertSame(true, $succeeded);
+        $result = $this->repository
+            ->update('same', $input, 'attribute2')
+            ->getResult()
+            ->toArray();
+
         $this->database->seeIn('test_models', [
             'id' => '1',
             'attribute1' => 'changed',

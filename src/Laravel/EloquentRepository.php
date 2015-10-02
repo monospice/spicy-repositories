@@ -131,14 +131,13 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
         $query = $this->model->where($column, '=', $record);
 
         if ($query->count() === 0) {
-            $this->result = false;
-            return $this;
+            $this->result = null;
         } elseif ($query->count() === 1) {
-            $this->result = $query->first()->update($data);
+            $row = $query->first();
+            $row->update($data);
+            $this->result = $row;
         } else {
-            $this->result = true;
-
-            $query->get()->each(function ($row) use ($data) {
+            $this->result = $query->get()->each(function ($row) use ($data) {
                 $result = $row->update($data);
 
                 if (! $result) {

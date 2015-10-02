@@ -184,7 +184,6 @@ class EloquentRepositorySpec extends ObjectBehavior
     function it_updates_a_record_and_gets_result()
     {
         $input = ['attribute1' => 'changed'];
-        $successStatus = true;
 
         $this->model->shouldReceive('where')->with('id', '=', 1)
             ->andReturn($this->builder);
@@ -192,13 +191,13 @@ class EloquentRepositorySpec extends ObjectBehavior
         $this->builder->shouldReceive('first')->once()
             ->andReturn($this->model);
         $this->model->shouldReceive('update')->with($input)
-            ->andReturn($successStatus);
+            ->andReturn($this->model);
 
         $result = $this->update(1, $input);
         $result->shouldHaveType(
             'Monospice\SpicyRepositories\Laravel\EloquentRepository'
         );
-        $result->getResult()->shouldReturn($successStatus);
+        $result->getResult()->shouldReturn($this->model);
     }
 
     function it_deletes_a_record_and_gets_result()
