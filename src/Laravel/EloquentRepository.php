@@ -128,9 +128,24 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
     // Inherit Doc from Interfaces\Repository
     public function update($record, array $data, $column = 'id')
     {
-        $this->result = $this->model
-            ->where($column, '=', $record)
-            ->update($data);
+        $query = $this->model->where($column, '=', $record);
+
+        if ($query->count() === 0) {
+            $this->result = false;
+            return $this;
+        } elseif ($query->count() === 1) {
+            $this->result = $query->first()->update($data);
+        } else {
+            $this->result = true;
+
+            $query->get()->each(function ($row) use ($data) {
+                $result = $row->update($data);
+
+                if (! $result) {
+                    $this->result = false;
+                }
+            });
+        }
 
         return $this;
     }
