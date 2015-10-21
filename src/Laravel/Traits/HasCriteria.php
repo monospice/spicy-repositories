@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories\Laravel\Traits;
 
+use Monospice\SpicyIdentifiers\DynamicMethod;
+
 /**
  * Defines methods for applying criteria to Repository methods
  *
@@ -35,17 +37,21 @@ trait HasCriteria
     }
 
     // Inherit Doc from Interfaces\Criteria
-    public function addCriterion($criteria)
+    public function addCriterion(DynamicMethod $method, array $arguments = [])
     {
-        $this->criteria[] = $criteria;
+        $this->criteria[] = function($query) use ($method, $arguments) {
+            array_unshift($arguments, $query);
+
+            return $method->callOn($this, $arguments);
+        };
 
         return $this;
     }
 
     // Inherit Doc from Interfaces\Criteria
-    public function addCriteria($criteria)
+    public function addCriteria(DynamicMethod $method, array $arguments = [])
     {
-        return $this->addCriterion($criteria);
+        return $this->addCriterion($method, $arguments);
     }
 
     // Inherit Doc from Interfaces\Criteria

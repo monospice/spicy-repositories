@@ -220,59 +220,68 @@ class EloquentRepositorySpec extends ObjectBehavior
 
     function it_gets_a_list_of_criteria_for_a_query()
     {
-        $this->getCriteria()->shouldReturn([]);
+        $this->getCriteria()->shouldBeArray();
     }
 
     function it_adds_a_criterion_to_a_query()
     {
-        $criteria = [function($query) { return $query; }];
+        $criterion = Mockery::mock('Monospice\SpicyIdentifiers\DynamicMethod');
 
-        $this->addCriterion($criteria[0])->shouldReturn($this);
-        $this->getCriteria()->shouldReturn($criteria);
-        $this->addCriteria($criteria[0])->shouldReturn($this);
-        $this->getCriteria()->shouldReturn([$criteria[0], $criteria[0]]);
+        $this->addCriterion($criterion)->shouldReturn($this);
+        $this->getCriteria()->shouldBeArray();
+        $this->getCriteria()->shouldHaveCount(1);
+
+        $this->addCriteria($criterion)->shouldReturn($this);
+        $this->getCriteria()->shouldBeArray();
+        $this->getCriteria()->shouldHaveCount(2);
     }
 
     function it_clears_a_set_of_criteria()
     {
-        $criteria = [function($query) { return $query; }];
+        $criterion = Mockery::mock('Monospice\SpicyIdentifiers\DynamicMethod');
 
-        $this->addCriterion($criteria[0])->clearCriteria()->shouldReturn($this);
-        $this->getCriteria()->shouldReturn([]);
+        $this->addCriterion($criterion)->clearCriteria()->shouldReturn($this);
+
+        $this->getCriteria()->shouldBeArray();
+        $this->getCriteria()->shouldHaveCount(0);
     }
 
     function it_applies_a_set_of_criteria_to_a_query()
     {
-        $criteria = [function($query) {
-            return $query->limit(5);
-        }];
-
-        $this->builder->shouldReceive('limit')->with('5')
-            ->andReturn($this->builder);
         $this->model->shouldReceive('newQuery')->once()
             ->andReturn($this->builder);
+        $this->builder->shouldReceive('limit')->with('5')->once()
+            ->andReturn($this->builder);
+        $this->builder->shouldReceive('get')->once()
+            ->andReturn($this->collection);
 
-        $this->addCriterion($criteria[0]);
-        $this->query()->shouldReturn($this->builder);
+        $this->limit(5)->shouldReturn($this);
+        $this->getCriteria()->shouldBeArray();
+        $this->getCriteria()->shouldHaveCount(1);
+        $this->getAll()->shouldReturn($this->collection);
 
-        $this->getCriteria()->shouldReturn([]);
+        $this->getCriteria()->shouldBeArray();
+        $this->getCriteria()->shouldHaveCount(0);
     }
 
     function it_remembers_a_set_of_criteria()
     {
-        $criteria = [function($query) { return $query; }];
-
         $this->model->shouldReceive('newQuery')->twice()
             ->andReturn($this->builder);
+        $this->builder->shouldReceive('limit')->with('5')->twice()
+            ->andReturn($this->builder);
+        $this->builder->shouldReceive('get')->twice()
+            ->andReturn($this->collection);
 
         $this->rememberCriteria();
-        $this->addCriterion($criteria[0]);
-        $this->query();
-        $this->getCriteria()->shouldReturn($criteria);
+        $this->limit(5)->getAll();
+        $this->getCriteria()->shouldHaveCount(1);
+
+        $this->clearCriteria();
 
         $this->rememberCriteria(false);
-        $this->query();
-        $this->getCriteria()->shouldReturn([]);
+        $this->limit(5)->getAll();
+        $this->getCriteria()->shouldHaveCount(0);
     }
 
     function it_applies_a_criterion_to_retrieve_only_specified_columns()

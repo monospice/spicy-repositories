@@ -14,73 +14,56 @@ namespace Monospice\SpicyRepositories\Laravel\Traits;
 trait BasicCriteria
 {
     // Inherit Doc from Interfaces\BasicCriteria
-    public function only($columns)
+    public function onlyCriterion($query, $columns)
     {
         if (! is_array($columns)) {
             $columns = func_get_args();
+            array_shift($columns);
         }
 
-        $this->addCriteria(function($query) use ($columns) {
-            return $query->select($columns);
-        });
-
-        return $this;
+        return $query->select($columns);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function exclude($columns)
+    public function excludeCriterion($query, $columns)
     {
         if (! is_array($columns)) {
             $columns = func_get_args();
+            array_shift($columns);
         }
 
-        $this->addCriteria(function($query) use ($columns) {
-            $schemaBuilder = $query->getQuery()->getConnection()->getSchemaBuilder();
-            $all = $schemaBuilder->getColumnListing($query->getModel()->getTable());
-            $difference = array_diff($all, $columns);
+        $schemaBuilder = $query->getQuery()->getConnection()->getSchemaBuilder();
+        $all = $schemaBuilder->getColumnListing($query->getModel()->getTable());
+        $difference = array_diff($all, $columns);
 
-            return $query->select($difference);
-        });
-
-        return $this;
+        return $query->select($difference);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function limit($limit)
+    public function limitCriterion($query, $limit)
     {
-        $this->addCriteria(function($query) use ($limit) {
-            return $query->limit($limit);
-        });
-
-        return $this;
+        return $query->limit($limit);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function orderBy($column, $direction = 'asc')
+    public function orderByCriterion($query, $column, $direction = 'asc')
     {
-        $this->addCriteria(function($query) use ($column, $direction) {
-            return $query->orderBy($column, $direction);
-        });
-
-        return $this;
+        return $query->orderBy($column, $direction);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function with($related)
+    public function withCriterion($query, $related)
     {
         if (! is_array($related)) {
             $related = func_get_args();
+            array_shift($related);
         }
 
-        $this->addCriteria(function($query) use ($related) {
-            return $query->with($related);
-        });
-
-        return $this;
+        return $query->with($related);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function withRelated()
+    public function withRelatedCriterion($query)
     {
         if ($this->related === null) {
             throw new \RuntimeException(
@@ -91,6 +74,6 @@ trait BasicCriteria
             );
         }
 
-        return $this->with($this->related);
+        return $query->with($this->related);
     }
 }

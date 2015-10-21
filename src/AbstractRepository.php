@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories;
 
+use Monospice\SpicyIdentifiers\DynamicMethod;
+
 use Monospice\SpicyRepositories\Interfaces;
 
 /**
@@ -44,5 +46,43 @@ abstract class AbstractRepository implements Interfaces\Repository
     public function getResult()
     {
         return $this->result;
+    }
+
+    /**
+     * Proxy dynamic method calls to criteria methods
+     *
+     * @param string $methodName The called method name
+     * @param array  $arguments  The called method arguments
+     *
+     * @return mixed The return value from the criterion method
+     *
+     * @throws \BadMethodCallException If the method does not exist in the
+     * repository
+     */
+    public function __call($methodName, array $arguments)
+    {
+        if (! property_exists($this, 'criteria')) {
+            throw new \BadMethodCallException(
+                'The current implementation of this repository class does ' .
+                'not support criteria. Ensure the "HasCriteria" trait and ' .
+                'interface are declared in the extending class or parent.'
+            );
+        }
+
+        $method = DynamicMethod::load($methodName)->append('Criterion');
+
+        if ($method->existsOn($this)) {
+            return $this->addCriterion($method, $arguments);
+        }
+
+        $method->pop()->append('Criteria');
+
+        if ($method->existsOn($this)) {
+            return $this->addCriterion($method, $arguments);
+        }
+
+        throw new \BadMethodCallException(
+            'The criteria method [' . $method . '] does not exist.'
+        );
     }
 }

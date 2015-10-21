@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories\Interfaces;
 
+use Monospice\SpicyIdentifiers\DynamicMethod;
+
 /**
  * Defines methods for applying criteria to Repository methods
  *
@@ -21,22 +23,28 @@ interface HasCriteria
     public function getCriteria();
 
     /**
-     * Add a criterion to the chain
+     * Add a criterion to the chain of criteria
      *
-     * @param function $criteria The closure representing the criteria to add
+     * @param Monospice\SpicyIdentifiers\DynamicMethod $method The method
+     * object representing the method of the criterion to apply
+     * @param array $arguments The array of arguments to pass to the criterion
+     * method
      *
      * @return mixed The current instance of the Repository for method chaining
      */
-    public function addCriterion($criteria);
+    public function addCriterion(DynamicMethod $method, array $arguments);
 
     /**
      * An alias for addCriterion()
      *
-     * @param function $criteria The closure representing the criteria to add
+     * @param Monospice\SpicyIdentifiers\DynamicMethod $method The method
+     * object representing the method of the criterion to apply
+     * @param array $arguments The array of arguments to pass to the criterion
+     * method
      *
      * @return mixed The current instance of the Repository for method chaining
      */
-    public function addCriteria($criteria);
+    public function addCriteria(DynamicMethod $method, array $arguments);
 
     /**
      * Apply the criteria to the query
