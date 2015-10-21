@@ -2,7 +2,9 @@
 
 namespace Monospice\SpicyRepositories\Laravel;
 
+use Closure;
 use Illuminate\Support\ServiceProvider;
+use Monospice\SpicyIdentifiers\DynamicMethod;
 
 /**
  * Binds the repository into the container
@@ -16,27 +18,12 @@ use Illuminate\Support\ServiceProvider;
 abstract class EloquentRepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * Return an associative array of repositories to bind into the service
-     * container consisting of key/value pairs where the key is the fully
-     * namespaced class name of the repository interface and the value is the
-     * closure function that returns a new instance of the concrete repository
+     * The interface name set by a repository binding method that binds to
+     * the next concrete repository
      *
-     * Example:
-     *
-     *  protected function getRepositories() {
-     *      return [
-     *          'App\Repositories\Interfaces\UserRepository' => function() {
-     *              return new \App\Repositories\UserRepository;
-     *          },
-     *          'App\Repositories\Interfaces\MessageRepository' => function() {
-     *              return new \App\Repositories\MessageRepository;
-     *          }
-     *      ];
-     *  }
-     *
-     * @return array The array of repository bindings
+     * @var string
      */
-    abstract protected function repositories();
+    protected $interface;
 
     /**
      * Boot the service
@@ -52,18 +39,62 @@ abstract class EloquentRepositoryServiceProvider extends ServiceProvider
      * Bind the repository interfaces into the service container
      *
      * @return void
+     *
+     * @throws \RuntimeException If the repository binding method does not
+     * define an interface to bind the concrete repository instance to
      */
     public function register()
     {
-        $repositories = $this->repositories();
+        $this->callRepositoryBindingMethods();
+    }
 
-        foreach ($repositories as $interface => $instanceClosure) {
-            $this->app->bind(
-                $interface,
-                function ($app) use ($instanceClosure) {
-                    return $instanceClosure();
-                }
+    /**
+     * Calls each of the repository binding methods
+     *
+     * @return void
+     *
+     * @throws \RuntimeException If the repository binding method does not
+     * define an interface to bind the concrete repository instance to
+     */
+    protected function callRepositoryBindingMethods()
+    {
+        $classMethods = get_class_methods($this);
+
+        foreach ($classMethods as $methodName) {
+            $method = DynamicMethod::parse($methodName);
+
+            if ($method->first() === 'bind'
+                && $method->last() === 'Repository'
+            ) {
+                $this->registerRepository($method->invokeOn($this));
+            }
+        }
+    }
+
+    /**
+     * Register a repository with the application container
+     *
+     * @param Closure $repositoryClosure The anonymous function that returns
+     * the concrete instance of the repository to use
+     *
+     * @return void
+     *
+     * @throws \RuntimeException If the repository binding method does not
+     * define an interface to bind the concrete repository instance to
+     */
+    protected function registerRepository(Closure $repositoryClosure)
+    {
+        if ($this->interface === null) {
+            throw new \RuntimeException(
+                'No repository interface specified in the [' .
+                $repositoryMethod . '] method. Please declare the interface ' .
+                'for this repository by setting "$this->interface" in the ' .
+                'repository binding method.'
             );
         }
+
+        $this->app->bind($this->interface, $repositoryClosure);
+
+        $this->interface = null;
     }
 }
