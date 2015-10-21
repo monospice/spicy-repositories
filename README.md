@@ -28,13 +28,13 @@ $users->filterByCustomCriteria()->orderBy('name')->getAll();
 Installation
 -------
 
-**Install the package:**
+### Install the package:
 
 ```
 $ composer require monospice/spicy-repositories
 ```
 
-**In a Laravel application:**
+### In a Laravel application:
 
 First, install the service provider to autoload repositories by creating
 a Repository Service Provider in your app:
@@ -44,23 +44,7 @@ use Monospice\SpicyRepositories\Laravel\EloquentRepositoryServiceProvider;
 
 class RepositoryServiceProvider extends EloquentRepositoryServiceProvider
 {
-    protected function repositories()
-    {
-        return [
-            'Namespace\Of\Your\Repository\Interface', function($app) {
-                // any setup logic
-                $model = new \YourModel();
-                return new \Namespace\Of\Your\ConcreteRepository($model);
-            },
-            // For example:
-            'App\Repositories\UserRepositoryInterface', function($app) {
-                return new \App\Repositories\UserRepository(new \App\User());
-            },
-            'App\Repositories\PostRepositoryInterface', function($app) {
-                return new \App\Repositories\PostRepository(new \App\Post());
-            },
-        ];
-    }
+    // repository binding methods here
 }
 ```
 
@@ -68,10 +52,34 @@ The Service Provider above binds your repositories into the Laravel container
 so Laravel will automagically inject an instance of your repository into any
 controllers that typehint the repository's interface.
 
+To instruct the package to bind a repository class, add a method to the service
+provider you just created that defines the abstract repository interface and
+returns a closure that creates a new instance of the concrete repository class:
+
+```php
+class RepositoryServiceProvider extends EloquentRepositoryServiceProvider
+{
+    protected function bindUserRepository()
+    {
+        $this->interface = 'App\Repositories\Interfaces\UserRepository';
+
+        return function () {
+            $model = new \App\User();
+            return new \App\Repositories\UserRepository($model);
+        };
+    }
+}
+```
+
+Repository binding methods must begin with `bind` and end with `Repository`.
+This naming convention encourages readable definitions of the repository
+class bindings.
+
 The EloquentRepositoryServiceProvider class calls the register method for you,
 so there's no need to redefine it here.
 
-Be sure to add the new Service Provider to your app.config:
+Be sure to add the new Service Provider to the services array in your
+`config/app.php` file:
 
 ```php
 ...
@@ -82,8 +90,12 @@ Be sure to add the new Service Provider to your app.config:
 ...
 ```
 
-Next, create a new repository and it's interface by extending the following
-classes:
+Creating Repositories
+---------------------
+
+Create a new repository and it's interface by extending the package's classes.
+
+**For the repository interface:**
 
 ```php
 use Monospice\SpicyRepositories\Interfaces\Repository;
@@ -94,6 +106,9 @@ interface UserRepositoryInterface extends Repository, BasicCriteria
     // custom repository methods here
 }
 ```
+
+**For the concrete repository class:**
+
 ```php
 use Monospice\SpicyRepositories\Laravel\EloquentRepository;
 use App\Repositories\UserRepositoryInterface;
@@ -172,7 +187,7 @@ $value = 'George Washington';
 $repository->paginateBy($column, $value, $itemsPerPage);
 ```
 
-**listAll()** - retrieve an associative array of all records containing the
+**listAll()** - retrieve an array of all records containing the
 
 values of one attribute
 
@@ -210,7 +225,7 @@ operation
 $repository->getResult();
 ```
 
-**Custom Methods**
+### Custom Methods
 
 Define custom methods in the repository classes that extend this package's
 base classes.
@@ -218,7 +233,7 @@ base classes.
 For example:
 
 ```php
-class UserRepository extends EloquentRepository
+class UserRepository extends EloquentRepository implements UserRepositoryInterface
 {
     public function customGetAll()
     {
@@ -289,13 +304,33 @@ And in the repository, add this property:
 protected $related = ['likes', 'comments'];
 ```
 
-**Custom Criteria**
+### Where's *where()*?
+
+To encourage the creation of reusable criteria, this repository framework
+explicitly excludes a `where()` criterion from the package. The framework
+intends for developers to compose readable criteria that perform the same
+functionality as *where* clauses instead of building complex queries each
+time that functionality is needed.
+
+If a project really needs a *where* criterion, one may define a criterion
+method in their child repository class like the following:
+
+```php
+public function whereCriterion($query, $column, $boolean, $value)
+{
+    return $query->where($column, $boolean, $value);
+}
+```
+
+For more information, see the next subsection.
+
+### Custom Criteria
 
 Repositories are especially powerful when developers create custom, reusable
 criteria for their repositories. These criteria should abstract units of complex
 or frequently used logic.
 
-For example, a developer may create an `honorStudent()` criteria that filters
+For example, a developer may create an `honorStudents()` criteria that filters
 results by user type and grade average, and a `freshman()` criteria that
 filters by user type and grade level.
 
@@ -304,25 +339,29 @@ The implementation never needs to know about the inner workings of the data
 layer:
 
 ```php
-$repository->freshman()->honorStudent()->getAll(); // freshman honors students
-$repository->honorStudent()->getAll();             // all honors students
+$repository->freshman()->honorStudents()->getAll(); // freshman honors students
+$repository->honorStudents()->getAll();             // all honors students
 ```
 
 To create custom criteria, define methods in the repository (and its interface)
-that call the `addCriterion()` method:
+that end with `Criterion` or `Criteria`:
 
 ```php
-public function honorStudent($gradeThreshold = 90)
+public function honorStudentCriterion($query, $gradeThreshold = 90)
 {
-    $this->addCriterion(function($query) use ($gradeThreshold) {
-        return $query
-            ->where('user_type', 'student')
-            ->where('grade_average', '>=', $gradeThreshold);
-    });
-
-    return $this; // don't forget the return statement for method chaining
+    return $query
+        ->where('user_type', 'student')
+        ->where('grade_average', '>=', $gradeThreshold);
 }
 ```
+
+In the example above, calls to `honorStudents()` automatically invoke the
+`honorStudentsCriterion()` method and pass the $query parameter along with any
+other parameters supplied to the `honorStudents()` method call.
+
+This convention encourages readable definitions of repository criteria in
+repository classes. Note that one should not declare the `honorStudents()`
+method explicitly. The repository framework handles the dynamic method call.
 
 Optionally, increase the reusability of your criteria by defining them in
 traits shared by repositories for models with the same attributes or
