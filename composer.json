@@ -13,7 +13,8 @@
         "php": ">=5.4.0",
         "illuminate/support": ">=4.2",
         "illuminate/database": ">=4.2",
-        "illuminate/pagination": ">=4.2"
+        "illuminate/pagination": ">=4.2",
+        "monospice/spicy-identifiers": "1.0.x-dev"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.3",
