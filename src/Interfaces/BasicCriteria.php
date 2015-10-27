@@ -30,7 +30,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Include only the specified columns in the result set
      *
-     * @param mixed        $query   The query object to apply the criterion to
+     * @param QueryBuilder $query   The query object to apply the criterion to
      * @param string|array $columns The columns to include in the result set
      *
      * @return mixed The passed query object
@@ -40,7 +40,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Exclude the specified columns from the result set
      *
-     * @param mixed        $query   The query object to apply the criterion to
+     * @param QueryBuilder $query   The query object to apply the criterion to
      * @param string|array $columns The columns to include in the result set
      *
      * @return mixed The passed query object
@@ -50,8 +50,8 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Limit the result set to the specified number of records
      *
-     * @param mixed $query The query object to apply the criterion to
-     * @param int   $limit The maximum number of records to return
+     * @param QueryBuilder $query The query object to apply the criterion to
+     * @param int          $limit The maximum number of records to return
      *
      * @return mixed The passed query object
      */
@@ -60,9 +60,9 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Order the result set by the specified column
      *
-     * @param mixed  $query     The query object to apply the criterion to
-     * @param string $column    The column to sort the result set by
-     * @param string $direction The order to sort the result set by
+     * @param QueryBuilder $query     The query object to apply the criterion to
+     * @param string       $column    The column to sort the result set by
+     * @param string       $direction The order to sort the result set by
      *
      * @return mixed The passed query object
      */
@@ -75,7 +75,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Eager load the specified relationships of the model
      *
-     * @param mixed        $query   The query object to apply the criterion to
+     * @param QueryBuilder $query   The query object to apply the criterion to
      * @param string|array $related The names of the relationships to load
      *
      * @return mixed The passed query object
@@ -85,7 +85,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Eager load all the relationships of the model
      *
-     * @param mixed $query The query object to apply the criterion to
+     * @param mixed $QueryBuilder The query object to apply the criterion to
      *
      * @return mixed The passed query object
      */

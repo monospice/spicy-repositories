@@ -30,10 +30,10 @@ interface Repository
     /**
      * Get a paginated set of records for the current model
      *
-     * @param int    $perPage  The number of records to show on each page
-     * @param string $pageName The identifier of the URL parameter to use for
+     * @param int|null $perPage  The number of records to show on each page
+     * @param string   $pageName The identifier of the URL parameter to use for
      * tracking pagination
-     * @param int    $page     The page number to get records for
+     * @param int|null $page     The page number to get records for
      *
      * @return \Illuminate\Pagination\Paginator The paginated result set
      *
@@ -68,12 +68,12 @@ interface Repository
      * Get a paginated set of records for the current model where a column
      * matches the specified value
      *
-     * @param string $column   The column used to match records
-     * @param mixed  $record   The value of the record to match on the column
-     * @param int    $perPage  The number of records to show on each page
-     * @param string $pageName The identifier of the URL parameter to use for
+     * @param string   $column   The column used to match records
+     * @param mixed    $record   The value of the record to match on the column
+     * @param int|null $perPage  The number of records to show on each page
+     * @param string   $pageName The identifier of the URL parameter to use for
      * tracking pagination
-     * @param int    $page     The page number to get records for
+     * @param int|null $page     The page number to get records for
      *
      * @return \Illuminate\Pagination\Paginator The paginated result set
      *

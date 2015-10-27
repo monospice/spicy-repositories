@@ -27,10 +27,10 @@ interface HasCriteria
     /**
      * Add a criterion to the chain of criteria
      *
-     * @param Monospice\SpicyIdentifiers\DynamicMethod $method The method
-     * object representing the method of the criterion to apply
-     * @param array $arguments The array of arguments to pass to the criterion
-     * method
+     * @param DynamicMethod $method    The method object representing the method
+     * of the criterion to apply
+     * @param array         $arguments The array of arguments to pass to the
+     * criterion method
      *
      * @return $this The current instance of the Repository for method chaining
      */
@@ -39,10 +39,10 @@ interface HasCriteria
     /**
      * An alias for addCriterion()
      *
-     * @param Monospice\SpicyIdentifiers\DynamicMethod $method The method
-     * object representing the method of the criterion to apply
-     * @param array $arguments The array of arguments to pass to the criterion
-     * method
+     * @param DynamicMethod $method    The method object representing the method
+     * of the criterion to apply
+     * @param array         $arguments The array of arguments to pass to the
+     * criterion method
      *
      * @return $this The current instance of the Repository for method chaining
      */
@@ -51,7 +51,7 @@ interface HasCriteria
     /**
      * Apply the criteria to the query
      *
-     * @param mixed $query The query object to apply the criteria to
+     * @param QueryBuilder $query The query object to apply the criteria to
      *
      * @return mixed The query object constrained by the applied criteria
      */
