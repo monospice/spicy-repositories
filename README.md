@@ -148,6 +148,8 @@ Repositories shine when you define your own custom reusable methods for
 specific cases. For convenience, however, the repositories in this package come
 with the following generic methods:
 
+### Retrieving Data
+
 **getAll()** - retrieve all records of a model
 
 ```php
@@ -159,6 +161,12 @@ $repository->getAll();
 ```php
 $itemsPerPage = 20;
 $repository->paginateAll($itemsPerPage);
+```
+
+**getFirst()** - retrieve the first record in a set
+
+```php
+$repository->getFirst();
 ```
 
 **get()** - retrieve a single record of a model by ID
@@ -196,6 +204,8 @@ $column = 'name';
 $repository->listAll($column);
 ```
 
+### Modifying Data
+
 **create()** - create a new record from an array of attribute data
 
 ```php
@@ -209,6 +219,34 @@ $repository->create($input);
 $recordId = 1;
 $changes = ['first' => 'Denzel'];
 $repository->update($recordId, $changes);
+```
+
+**updateOrCreate()** - update an existing record or create it if it doesn't
+exist
+
+```php
+$repository->updateOrCreate()
+    ->where([
+        'first' => 'George',
+        'last' => 'Washington',
+    ])
+    ->set([
+        'occupation' => 'President of the US'
+    ]);
+```
+
+In the example above, the repository will set the `occupation` field of the
+record if the record exists. Otherwise, it will create a new record and set
+all three fields to the given values.
+
+One may specify multiple where clauses to find records by and the operation
+will update each matching record or create a new record:
+
+```php
+$repository->updateOrCreate()
+    ->where(['first' => 'George'])
+    ->orWhere(['first' => 'Denzel'])
+    ->set(['occupation' => 'Some guy named Washington']);
 ```
 
 **delete()** - delete the specified record
