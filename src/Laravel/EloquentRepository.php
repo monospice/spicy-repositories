@@ -151,6 +151,12 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
     }
 
     // Inherit Doc from Interfaces\Repository
+    public function updateOrCreate()
+    {
+        return new UpdateOrCreate($this, $this->model);
+    }
+
+    // Inherit Doc from Interfaces\Repository
     public function delete($record, $column = 'id')
     {
         $this->result = $this->model->newQuery()

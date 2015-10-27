@@ -157,6 +157,34 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
         ]);
     }
 
+    public function testUpdateOrCreateCreate()
+    {
+        $result = $this->repository->updateOrCreate()
+            ->where(['attribute1' => 'new'])
+            ->set(['attribute2' => 'new' ])
+            ->getResult();
+
+        $this->database->seeIn('test_models', [
+            'id' => 4,
+            'attribute1' => 'new',
+            'attribute2' => 'new',
+        ]);
+    }
+
+    public function testUpdateOrCreateUpdate()
+    {
+        $result = $this->repository->updateOrCreate()
+            ->where(['attribute1' => 'value1'])
+            ->set(['attribute2' => 'new' ])
+            ->getResult();
+
+        $this->database->seeIn('test_models', [
+            'id' => 1,
+            'attribute1' => 'value1',
+            'attribute2' => 'new',
+        ]);
+    }
+
     public function testDelete()
     {
         $numChanged = $this->repository->delete(1)->getResult();
