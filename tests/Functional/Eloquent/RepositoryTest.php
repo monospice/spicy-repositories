@@ -67,6 +67,13 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($page2, $result->toArray()['data']);
     }
 
+    public function testGetFirst()
+    {
+        $result = $this->repository->getFirst();
+
+        $this->assertSame($this->data[0], $result->toArray());
+    }
+
     public function testGet()
     {
         $result = $this->repository->get(1);

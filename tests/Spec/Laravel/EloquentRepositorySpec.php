@@ -91,6 +91,20 @@ class EloquentRepositorySpec extends ObjectBehavior
         $result->toArray()->shouldEqual($this->items[0]);
     }
 
+    function it_get_the_first_record_in_a_set()
+    {
+        $this->collection->shouldReceive('toArray')->once()
+            ->andReturn($this->items[0]);
+        $this->builder->shouldReceive('first')->once()
+            ->andReturn($this->collection);
+        $this->model->shouldReceive('newQuery')->once()
+            ->andReturn($this->builder);
+
+        $result = $this->getFirst();
+        $result->shouldHaveType('Illuminate\Database\Eloquent\Collection');
+        $result->toArray()->shouldEqual($this->items[0]);
+    }
+
     function it_gets_a_record_by_the_id()
     {
         $this->collection->shouldReceive('toArray')->once()

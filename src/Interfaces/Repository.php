@@ -21,6 +21,13 @@ interface Repository
     public function getAll();
 
     /**
+     * Get the first record in the result set for the current model
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getFirst();
+
+    /**
      * Get a paginated set of records for the current model
      *
      * @param int    $perPage  The number of records to show on each page
