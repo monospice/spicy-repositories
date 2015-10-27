@@ -13,6 +13,13 @@ namespace Monospice\SpicyRepositories\Laravel\Traits;
  */
 trait BasicCriteria
 {
+    /**
+     * The relationships of the model used for the withRelated() criterion
+     *
+     * @var array
+     */
+    protected $related;
+
     // Inherit Doc from Interfaces\BasicCriteria
     public function onlyCriterion($query, $columns)
     {
@@ -32,9 +39,10 @@ trait BasicCriteria
             array_shift($columns);
         }
 
-        $schemaBuilder = $query->getQuery()->getConnection()->getSchemaBuilder();
-        $all = $schemaBuilder->getColumnListing($query->getModel()->getTable());
-        $difference = array_diff($all, $columns);
+        // Get the attributes of the model and filter out all but specified
+        $schema = $query->getQuery()->getConnection()->getSchemaBuilder();
+        $allColumns = $schema->getColumnListing($query->getModel()->getTable());
+        $difference = array_diff($allColumns, $columns);
 
         return $query->select($difference);
     }

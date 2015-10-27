@@ -37,8 +37,6 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
      */
     public function __construct(Model $model)
     {
-        parent::__construct();
-
         $this->model = $model;
     }
 
@@ -113,7 +111,7 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
         }
 
         throw new \RuntimeException(
-            'Could not convert returned ' .gettype($list) . ' into an array.'
+            'Could not convert returned [' . gettype($list) . '] into an array.'
         );
     }
 

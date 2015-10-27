@@ -58,7 +58,7 @@ interface HasCriteria
     /**
      * Remove all criteria from the chain
      *
-     * @return mixed The current instance of the Repository for method chaining
+     * @return $this The current instance of the Repository for method chaining
      */
     public function clearCriteria();
 

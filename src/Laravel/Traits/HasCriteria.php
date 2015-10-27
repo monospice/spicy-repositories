@@ -20,7 +20,7 @@ trait HasCriteria
      *
      * @var array
      */
-    protected $criteria;
+    protected $criteria = [];
 
     /**
      * Flag indicates that the criteria should be reset after each query
@@ -28,7 +28,7 @@ trait HasCriteria
      *
      * @var bool
      */
-    protected $rememberCriteria;
+    protected $rememberCriteria = false;
 
     // Inherit Doc from Interfaces\Criteria
     public function getCriteria()
@@ -82,5 +82,35 @@ trait HasCriteria
         $this->rememberCriteria = $shouldRemember;
 
         return $this;
+    }
+
+    /**
+     * Proxy dynamic method calls to criteria methods
+     *
+     * @param string $methodName The called method name
+     * @param array  $arguments  The called method arguments
+     *
+     * @return mixed The return value from the criterion method
+     *
+     * @throws \BadMethodCallException If the method does not exist in the
+     * repository
+     */
+    public function __call($methodName, array $arguments)
+    {
+        $method = DynamicMethod::load($methodName)->append('Criterion');
+
+        if ($method->existsOn($this)) {
+            return $this->addCriterion($method, $arguments);
+        }
+
+        $method->pop()->append('Criteria');
+
+        if ($method->existsOn($this)) {
+            return $this->addCriterion($method, $arguments);
+        }
+
+        throw new \BadMethodCallException(
+            'The criteria method [' . $method . '] does not exist.'
+        );
     }
 }
