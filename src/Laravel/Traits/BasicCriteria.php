@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories\Laravel\Traits;
 
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+
 /**
  * Defines methods for adding basic criteria to Repository classes
  *
@@ -21,23 +23,17 @@ trait BasicCriteria
     protected $related;
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function onlyCriterion($query, $columns)
+    public function onlyCriterion(QueryBuilder $query, $columns)
     {
-        if (! is_array($columns)) {
-            $columns = func_get_args();
-            array_shift($columns);
-        }
+        $columns = static::getArgumentsArray($columns, func_get_args());
 
         return $query->select($columns);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function excludeCriterion($query, $columns)
+    public function excludeCriterion(QueryBuilder $query, $columns)
     {
-        if (! is_array($columns)) {
-            $columns = func_get_args();
-            array_shift($columns);
-        }
+        $columns = static::getArgumentsArray($columns, func_get_args());
 
         // Get the attributes of the model and filter out all but specified
         $schema = $query->getQuery()->getConnection()->getSchemaBuilder();
@@ -48,30 +44,30 @@ trait BasicCriteria
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function limitCriterion($query, $limit)
+    public function limitCriterion(QueryBuilder $query, $limit)
     {
         return $query->limit($limit);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function orderByCriterion($query, $column, $direction = 'asc')
-    {
+    public function orderByCriterion(
+        QueryBuilder $query,
+        $column,
+        $direction = 'asc'
+    ) {
         return $query->orderBy($column, $direction);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function withCriterion($query, $related)
+    public function withCriterion(QueryBuilder $query, $related)
     {
-        if (! is_array($related)) {
-            $related = func_get_args();
-            array_shift($related);
-        }
+        $related = static::getArgumentsArray($related, func_get_args());
 
         return $query->with($related);
     }
 
     // Inherit Doc from Interfaces\BasicCriteria
-    public function withRelatedCriterion($query)
+    public function withRelatedCriterion(QueryBuilder $query)
     {
         if ($this->related === null) {
             throw new \RuntimeException(
@@ -83,5 +79,24 @@ trait BasicCriteria
         }
 
         return $query->with($this->related);
+    }
+
+    /**
+     * Get the array of dynamic arguments without the QueryBuilder argument
+     *
+     * @param mixed $array     Might be an array or the first passed argument
+     * @param array $arguments The arguments passed to the method
+     *
+     * @return array The sanitized array of arguments
+     */
+    protected function getArgumentsArray($array, array $arguments)
+    {
+        if (is_array($array)) {
+            return $array;
+        }
+
+        array_shift($arguments);
+
+        return $arguments;
     }
 }

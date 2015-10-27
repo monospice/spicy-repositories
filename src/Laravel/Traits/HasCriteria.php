@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories\Laravel\Traits;
 
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+
 use Monospice\SpicyIdentifiers\DynamicMethod;
 
 /**
@@ -55,7 +57,7 @@ trait HasCriteria
     }
 
     // Inherit Doc from Interfaces\Criteria
-    public function applyCriteria($query)
+    public function applyCriteria(QueryBuilder $query)
     {
         foreach ($this->criteria as $applyCriteria) {
             $query = $applyCriteria($query);
@@ -90,7 +92,7 @@ trait HasCriteria
      * @param string $methodName The called method name
      * @param array  $arguments  The called method arguments
      *
-     * @return mixed The return value from the criterion method
+     * @return $this The current Repository instance for method chaining
      *
      * @throws \BadMethodCallException If the method does not exist in the
      * repository

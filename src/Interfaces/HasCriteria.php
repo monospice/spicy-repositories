@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories\Interfaces;
 
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+
 use Monospice\SpicyIdentifiers\DynamicMethod;
 
 /**
@@ -53,7 +55,7 @@ interface HasCriteria
      *
      * @return mixed The query object constrained by the applied criteria
      */
-    public function applyCriteria($query);
+    public function applyCriteria(QueryBuilder $query);
 
     /**
      * Remove all criteria from the chain

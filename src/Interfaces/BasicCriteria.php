@@ -2,6 +2,8 @@
 
 namespace Monospice\SpicyRepositories\Interfaces;
 
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+
 use Monospice\SpicyRepositories\Interfaces;
 
 /**
@@ -33,7 +35,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
      *
      * @return mixed The passed query object
      */
-    public function onlyCriterion($query, $columns);
+    public function onlyCriterion(QueryBuilder $query, $columns);
 
     /**
      * Exclude the specified columns from the result set
@@ -43,7 +45,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
      *
      * @return mixed The passed query object
      */
-    public function excludeCriterion($query, $columns);
+    public function excludeCriterion(QueryBuilder $query, $columns);
 
     /**
      * Limit the result set to the specified number of records
@@ -53,7 +55,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
      *
      * @return mixed The passed query object
      */
-    public function limitCriterion($query, $limit);
+    public function limitCriterion(QueryBuilder $query, $limit);
 
     /**
      * Order the result set by the specified column
@@ -64,7 +66,11 @@ interface BasicCriteria extends Interfaces\HasCriteria
      *
      * @return mixed The passed query object
      */
-    public function orderByCriterion($query, $column, $direction = 'asc');
+    public function orderByCriterion(
+        QueryBuilder $query,
+        $column,
+        $direction = 'asc'
+    );
 
     /**
      * Eager load the specified relationships of the model
@@ -74,7 +80,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
      *
      * @return mixed The passed query object
      */
-    public function withCriterion($query, $related);
+    public function withCriterion(QueryBuilder $query, $related);
 
     /**
      * Eager load all the relationships of the model
@@ -83,5 +89,5 @@ interface BasicCriteria extends Interfaces\HasCriteria
      *
      * @return mixed The passed query object
      */
-    public function withRelatedCriterion($query);
+    public function withRelatedCriterion(QueryBuilder $query);
 }
