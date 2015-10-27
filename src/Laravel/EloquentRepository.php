@@ -9,7 +9,7 @@ use Monospice\SpicyRepositories\Interfaces\BasicCriteria;
 use Monospice\SpicyRepositories\Laravel\Traits;
 
 /**
- * Defines methods for Repository classes
+ * An abstraction to access and manipulate data in Laravel using the repository
  *
  * @category Package
  * @package  Monospice\SpicyRepositories
@@ -42,14 +42,8 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
         $this->model = $model;
     }
 
-    /**
-     * Start a new query on the model, applying any existing criteria
-     *
-     * @override
-     *
-     * @return mixed The new query object
-     */
-    public function query()
+    // Inherit Doc from AbstractRepository
+    protected function select()
     {
         $query = $this->model->newQuery();
 
@@ -63,7 +57,13 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
     // Inherit Doc from Interfaces\Repository
     public function getAll()
     {
-        return $this->query()->get();
+        return $this->select()->get();
+    }
+
+    // Inherit Doc from Interfaces\Repository
+    public function getFirst()
+    {
+        return $this->select()->first();
     }
 
     // Inherit Doc from Interfaces\Repository
@@ -72,19 +72,19 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
         $pageName = 'page',
         $page = null
     ) {
-        return $this->query()->paginate($perPage, ['*'], $pageName, $page);
+        return $this->select()->paginate($perPage, ['*'], $pageName, $page);
     }
 
     // Inherit Doc from Interfaces\Repository
     public function get($id)
     {
-        return $this->query()->find($id);
+        return $this->select()->find($id);
     }
 
     // Inherit Doc from Interfaces\Repository
     public function getBy($column, $record)
     {
-        return $this->query()->where($column, '=', $record)->get();
+        return $this->select()->where($column, '=', $record)->get();
     }
 
     // Inherit Doc from Interfaces\Repository
@@ -95,14 +95,14 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
         $pageName = 'page',
         $page = null
     ) {
-        return $this->query()->where($column, '=', $record)
+        return $this->select()->where($column, '=', $record)
             ->paginate($perPage, ['*'], $pageName, $page);
     }
 
     // Inherit Doc from Interfaces\Repository
     public function getList($valueColumn, $keyColumn = 'id')
     {
-        $list = $this->query()->lists($valueColumn, $keyColumn);
+        $list = $this->select()->lists($valueColumn, $keyColumn);
 
         if (is_array($list)) {
             return $list;
@@ -129,10 +129,11 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
     public function update($record, array $data, $column = 'id')
     {
         $query = $this->model->where($column, '=', $record);
+        $numRows = $query->count();
 
-        if ($query->count() === 0) {
+        if ($numRows === 0) {
             $this->result = null;
-        } elseif ($query->count() === 1) {
+        } elseif ($numRows === 1) {
             $row = $query->first();
             $row->update($data);
             $this->result = $row;

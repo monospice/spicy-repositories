@@ -5,7 +5,7 @@ namespace Monospice\SpicyRepositories\Laravel\Traits;
 use Monospice\SpicyIdentifiers\DynamicMethod;
 
 /**
- * Defines methods for applying criteria to Repository methods
+ * Enables a repository to define criteria methods
  *
  * @category Package
  * @package  Monospice\SpicyRepositories
@@ -23,8 +23,8 @@ trait HasCriteria
     protected $criteria;
 
     /**
-     * True flag indicates that the criteria should be reset after each query
-     * (default: true)
+     * Flag indicates that the criteria should be reset after each query
+     * (default: false)
      *
      * @var bool
      */

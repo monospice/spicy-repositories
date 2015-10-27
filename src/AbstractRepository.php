@@ -25,6 +25,13 @@ abstract class AbstractRepository implements Interfaces\Repository
     protected $result;
 
     /**
+     * The relationships of the model
+     *
+     * @var array
+     */
+    protected $related;
+
+    /**
      * Create a new instance of this class
      */
     public function __construct()
@@ -36,11 +43,17 @@ abstract class AbstractRepository implements Interfaces\Repository
     }
 
     /**
-     * Start a new query on the model, applying any existing criteria
+     * Start a new select query on the model, applying any existing criteria
      *
      * @return mixed The new query object
      */
-    abstract public function query();
+    abstract protected function select();
+
+    // Inherit Doc from Interfaces\Repository
+    public function setResult($result)
+    {
+        $this->result = $result;
+    }
 
     // Inherit Doc from Interfaces\Repository
     public function getResult()

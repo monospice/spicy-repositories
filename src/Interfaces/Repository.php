@@ -102,12 +102,23 @@ interface Repository
     public function getResult();
 
     /**
+     * Set the result of the last create, update, or delete query. Used by
+     * repository operation classes to pass the result back to the repository
+     * instance
+     *
+     * @param mixed $result The value of the last create, update, or delete
+     * query
+     *
+     * @return $this The current repository instance for method chaining
+     */
+    public function setResult($result);
+
+    /**
      * Create a record using an array of data, usually input from a form
      *
      * @param array $data The data used to create the record
      *
-     * @return EloquentRepository The current repository instance for method
-     * chaining
+     * @return $this The current repository instance for method chaining
      */
     public function create(array $data);
 
@@ -119,10 +130,17 @@ interface Repository
      * @param array  $data   The data used to update the record
      * @param string $column The column used to match the updated record
      *
-     * @return EloquentRepository The current repository instance for method
-     * chaining
+     * @return $this The current repository instance for method chaining
      */
     public function update($record, array $data, $column = 'id');
+
+    /**
+     * Update a record or create a new record if it doesn't exist
+     *
+     * @return \Monospice\SpicyRepositories\Interfaces\UpdateOrCreate The
+     * instance of the class that performs the update or create operation
+     */
+    public function updateOrCreate();
 
     /**
      * Delete a record
@@ -131,8 +149,7 @@ interface Repository
      * record
      * @param string $column The column used to match the deleted record
      *
-     * @return EloquentRepository The current repository instance for method
-     * chaining
+     * @return $this The current repository instance for method chaining
      */
     public function delete($record, $column = 'id');
 }

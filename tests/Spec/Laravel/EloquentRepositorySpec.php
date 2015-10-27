@@ -187,7 +187,7 @@ class EloquentRepositorySpec extends ObjectBehavior
 
         $this->model->shouldReceive('where')->with('id', '=', 1)
             ->andReturn($this->builder);
-        $this->builder->shouldReceive('count')->twice()->andReturn(1);
+        $this->builder->shouldReceive('count')->once()->andReturn(1);
         $this->builder->shouldReceive('first')->once()
             ->andReturn($this->model);
         $this->model->shouldReceive('update')->with($input)
