@@ -85,7 +85,7 @@ interface BasicCriteria extends Interfaces\HasCriteria
     /**
      * Eager load all the relationships of the model
      *
-     * @param mixed $QueryBuilder The query object to apply the criterion to
+     * @param QueryBuilder $query The query object to apply the criterion to
      *
      * @return mixed The passed query object
      */
