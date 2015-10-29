@@ -204,6 +204,36 @@ $column = 'name';
 $repository->listAll($column);
 ```
 
+**exists()** - determine if any records exist
+
+```php
+$repository->exists();
+```
+
+This method is more useful for checking if records exist after applying
+criteria to a query:
+
+```php
+$repository->forUserType($userType)->exists();
+```
+
+**count()** - retrieve the number of records for a query
+
+```php
+$repository->count();
+```
+
+With no criteria, this method returns the number of all records for a model.
+`count()` is more useful for determining the number of records after applying
+criteria:
+
+```php
+$repository->forUserType($userType)->count();
+```
+
+For more information about repository criteria, see the **Criteria** section
+later in this document.
+
 ### Modifying Data
 
 **create()** - create a new record from an array of attribute data
