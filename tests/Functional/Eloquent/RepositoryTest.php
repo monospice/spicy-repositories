@@ -110,6 +110,18 @@ class EloquentRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($list, $result);
     }
 
+    public function testExists()
+    {
+        $this->assertTrue($this->repository->exists());
+    }
+
+    public function testCount()
+    {
+        $result = $this->repository->count();
+
+        $this->assertSame(3, $result);
+    }
+
     public function testCreate()
     {
         $input = [

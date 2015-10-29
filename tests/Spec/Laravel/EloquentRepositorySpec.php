@@ -171,6 +171,28 @@ class EloquentRepositorySpec extends ObjectBehavior
         $this->getList('attribute1')->shouldEqual($list);
     }
 
+    function it_determines_if_any_records_exist()
+    {
+        $this->model->shouldReceive('newQuery')->once()
+            ->andReturn($this->builder);
+        $this->builder->shouldReceive('exists')->once()
+            ->andReturn(true);
+
+        $this->exists()->shouldReturn(true);
+    }
+
+    function it_counts_the_number_of_records_matching_a_query()
+    {
+        $this->model->shouldReceive('newQuery')->once()
+            ->andReturn($this->builder);
+        $this->model->shouldReceive('getKeyName')->once()
+            ->andReturn('id');
+        $this->builder->shouldReceive('count')->with('id')->once()
+            ->andReturn(3);
+
+        $this->count()->shouldReturn(3);
+    }
+
     function it_creates_a_new_record_and_gets_result()
     {
         $input = [

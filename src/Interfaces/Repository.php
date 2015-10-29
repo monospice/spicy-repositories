@@ -101,6 +101,23 @@ interface Repository
     public function getList($valueColumn, $keyColumn = 'id');
 
     /**
+     * Determine if any records exist for the current query
+     *
+     * @return bool True if records exist
+     */
+    public function exists();
+
+    /**
+     * Get the number of records for the current query. Uses the model's
+     * primary key to count by default
+     *
+     * @param string|null $columns The columns to count by
+     *
+     * @return int The number of matching records
+     */
+    public function count($columns = null);
+
+    /**
      * Get the result of the last create, update, or delete query
      *
      * @return mixed The value of the result of the last create, update, or

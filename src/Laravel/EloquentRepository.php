@@ -116,6 +116,28 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
     }
 
     // Inherit Doc from Interfaces\Repository
+    public function exists()
+    {
+        return $this->select()->exists();
+    }
+
+    // Inherit Doc from Interfaces\Repository
+    public function count($columns = null)
+    {
+        // Count rows using the model's primary key by default
+        if ($columns === null) {
+            $columns = $this->model->getKeyName();
+        }
+
+        // If we cannot determine the columns to match, count all columns
+        if (! $columns) {
+            $columns = '*';
+        }
+
+        return $this->select()->count($columns);
+    }
+
+    // Inherit Doc from Interfaces\Repository
     public function create(array $data)
     {
         $this->result = $this->model->create($data);
