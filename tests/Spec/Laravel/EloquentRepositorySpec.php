@@ -411,4 +411,10 @@ class EloquentRepositorySpec extends ObjectBehavior
         $result->shouldHaveType('Illuminate\Database\Eloquent\Collection');
         $result->toArray()->shouldEqual($resultSet);
     }
+
+    function it_throws_an_exception_if_the_criterion_does_not_exist()
+    {
+        $this->shouldThrow('BadMethodCallException')
+            ->during('notACriterion');
+    }
 }

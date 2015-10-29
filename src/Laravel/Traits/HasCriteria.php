@@ -111,8 +111,11 @@ trait HasCriteria
             return $this->addCriterion($method, $arguments);
         }
 
-        throw new \BadMethodCallException(
-            'The criteria method [' . $method . '] does not exist.'
+        $className = get_class($this);
+
+        $method->throwException(
+            "The criterion method [${method}Criterion] does not exist on "
+            . "${className}."
         );
     }
 }

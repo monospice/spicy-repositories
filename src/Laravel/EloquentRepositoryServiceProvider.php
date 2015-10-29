@@ -63,8 +63,8 @@ abstract class EloquentRepositoryServiceProvider extends ServiceProvider
         foreach ($classMethods as $methodName) {
             $method = DynamicMethod::parse($methodName);
 
-            if ($method->first() === 'bind'
-                && $method->last() === 'Repository'
+            if ($method->startsWith('bind')
+                && $method->endsWith('Repository')
             ) {
                 $this->registerRepository($method->invokeOn($this));
             }
