@@ -92,7 +92,7 @@ trait HasCriteria
      * @param string $methodName The called method name
      * @param array  $arguments  The called method arguments
      *
-     * @return $this The current Repository instance for method chaining
+     * @return $this|null The current Repository instance for method chaining
      *
      * @throws \BadMethodCallException If the method does not exist in the
      * repository
