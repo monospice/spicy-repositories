@@ -181,10 +181,24 @@ class EloquentRepository extends AbstractRepository implements BasicCriteria
     // Inherit Doc from Interfaces\Repository
     public function delete($record, $column = 'id')
     {
+        $record = static::getAttributeIfModel($record, $column);
+
         $this->result = $this->model->newQuery()
             ->where($column, '=', $record)
             ->delete();
 
         return $this;
+    }
+
+    // Inherit Doc from AbstractRepository
+    protected static function getAttributeIfModel(
+        $modelOrAttribute,
+        $attribute = 'id'
+    ) {
+        if ($modelOrAttribute instanceof Model) {
+            return $modelOrAttribute->$attribute;
+        }
+
+        return $modelOrAttribute;
     }
 }
