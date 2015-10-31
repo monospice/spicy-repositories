@@ -54,17 +54,38 @@ controllers that typehint the repository's interface.
 
 To instruct the package to bind a repository class, add a method to the service
 provider you just created that defines the abstract repository interface and
-returns a closure that creates a new instance of the concrete repository class:
+returns the class name of the matching concrete repository:
 
 ```php
 class RepositoryServiceProvider extends EloquentRepositoryServiceProvider
 {
     protected function bindUserRepository()
     {
-        $this->interface = 'App\Repositories\Interfaces\UserRepository';
+        $this->interface = \App\Repositories\Interfaces\UserRepository::class;
+
+        return \App\Repositories\UserRepository::class;
+    }
+}
+```
+
+In some cases, a developer may need additional functionality to instantiate
+a repository. The repository binding method may also return an anonymous
+function with the new repository instance:
+
+```php
+class RepositoryServiceProvider extends EloquentRepositoryServiceProvider
+{
+    protected function bindUserRepository()
+    {
+        $this->interface = \App\Repositories\Interfaces\UserRepository::class;
 
         return function () {
-            $model = new \App\User();
+            if ($someCondition) {
+                $model = new \App\User();
+            } else {
+                $model = new \App\AdminUser();
+            }
+
             return new \App\Repositories\UserRepository($model);
         };
     }
@@ -109,6 +130,10 @@ interface UserRepositoryInterface extends Repository, BasicCriteria
 
 **For the concrete repository class:**
 
+Ensure that the repository class receives an instance of the model in the
+constructor. If using the service provider described in the previous section,
+the framework will automatically inject an instance of the model.
+
 ```php
 use Monospice\SpicyRepositories\Laravel\EloquentRepository;
 use App\Repositories\UserRepositoryInterface;
@@ -124,19 +149,19 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
 }
 ```
 
-Alternatively, you may choose to create a base repository class and inteface
+Alternatively, you may choose to create a base repository class and interface
 for your application so you only need to extend the package classes once.
 
-Now this repository can be used in controllers by type-hinting the repository's
+Now, this repository can be used in controllers by type-hinting the repository's
 interface. Laravel will inject an instance automatically:
 
 ```php
 class UserController extends Controller
 {
-    public function __construct(UserRepositoryInterface $repository)
+    public function __construct(UserRepositoryInterface $users)
     {
         // use the repository
-        $repository->getAll();
+        $users->getAll();
     }
 }
 ```
