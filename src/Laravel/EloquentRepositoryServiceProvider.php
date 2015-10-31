@@ -74,15 +74,16 @@ abstract class EloquentRepositoryServiceProvider extends ServiceProvider
     /**
      * Register a repository with the application container
      *
-     * @param Closure $repositoryClosure The anonymous function that returns
-     * the concrete instance of the repository to use
+     * @param Closure|string $repositoryClosureOrClass The anonymous function
+     * that returns the concrete instance of the repository to use or the
+     * string name of the repository
      *
      * @return void
      *
      * @throws \RuntimeException If the repository binding method does not
      * define an interface to bind the concrete repository instance to
      */
-    protected function registerRepository(Closure $repositoryClosure)
+    protected function registerRepository($repositoryClosureOrClass)
     {
         if ($this->interface === null) {
             throw new \RuntimeException(
@@ -93,7 +94,7 @@ abstract class EloquentRepositoryServiceProvider extends ServiceProvider
             );
         }
 
-        $this->app->bind($this->interface, $repositoryClosure);
+        $this->app->bind($this->interface, $repositoryClosureOrClass);
 
         $this->interface = null;
     }
